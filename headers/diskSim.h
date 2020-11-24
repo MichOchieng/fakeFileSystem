@@ -24,8 +24,6 @@ typedef struct dataGroup
     /* data */
 };
 
-
-
 void  diskInit();
 void  diskRead(int index);
 void  diskWrite(int index);
