@@ -2,13 +2,26 @@
 #include <stdlib.h>
 #include "headers/diskSim.h"
 
-const int superblockStart = 0;
-const int inodeStart      = 0;
-const int dataGroupStart  = 0;
+const int superblockStart  = 0;
+const int inodeBMStart     = 128;
+const int inodeStart       = 256;
+const int dataGroup0Start  = 385;
+const int dataGroup1Start  = 515;
+const int dataGroup2Start  = 643;
+const int dataGroup3Start  = 772;
 
-const int superblockEnd   = 0;
-const int inodeGroupEnd   = 0;
-const int dataGroupEnd    = 0;
+const int dataGroup0       = 384;
+const int dataGroup1       = 514;
+const int dataGroup2       = 642;
+const int dataGroup3       = 771;
+
+const int superblockEnd    = 127;
+const int inodeBMEnd       = 255;
+const int inodesEnd        = 383;
+const int dataGroup0End    = 513;
+const int dataGroup1End    = 641;
+const int dataGroup2End    = 770;
+const int dataGroup3End    = 889;
 
 unsigned char disk[maxSize];
 char *test = "test";
