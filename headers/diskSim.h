@@ -1,8 +1,8 @@
-#define blockSize 128
-#define maxSize   1280000
-#define maxBlocks 1000
-#define maxInodes 1024
-#define magicNum  0xf0f03410
+#define maxSize 1280000
+const int blockSize = 128;
+const int maxBlocks = 10000;
+const int maxInodes = 1024;
+const unsigned char magicNum = 0xf0f03410;
 
 // Block starting positions
 const int superblockStart  = 0;
