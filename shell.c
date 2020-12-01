@@ -40,10 +40,8 @@ char * reader(){
             // If the memory block is too small for their input
             if(i == pow(2,n)){
                 // Increase the size of the alloted memory
-                // printf("Increasing alloted memory...\n");
                 n++;
                 input = realloc(input, pow(2,n)*sizeof(char));
-                // printf("Increase successful!\n");
             }
             i++;
         }        
@@ -69,10 +67,8 @@ char ** parser(char * input){
             // If the memory block is too small for their input
             if(i == pow(2,n)){
                 // Increase the size of the alloted memory
-                // printf("Increasing alloted memory...\n");
                 n++;
                 parseArray = realloc(parseArray, pow(2,n)*sizeof(char*));
-                // printf("Increase successful!\n");
             }
             i++;
             token = strtok(NULL,delims);
@@ -82,45 +78,63 @@ char ** parser(char * input){
 }
 
 void execute(char ** args){
-    int status;
-    int thisID = fork();
-    char *paths[]={"cd","cat","ls","util/echo"};
-
-    char *cd = "cd";
-    char *ls = "ls";
-    char *l = "l";    
-    char *echo = "echo";
-    char *cat = "cat";
+    char *touch = "touch";
+    char *rm    = "rm";
+    char *write = "write";
+    char *cd    = "cd";    
     char *exitt = "exit";
-    // Handles child process 
-    if (thisID == 0){       
-        // Directs to correct command based on the first token in the args array
-        // Using execvp so that I can access the exe files even after changing directories
-        if (strcmp(args[0],cd) == 0){            
-            // No child born
+
+    char *arg0;
+    char *arg1;
+    char *arg2 = "";
+
+    int i = 0;  
+    // Gets arguments
+    while (args[i] != NULL)
+    {
+        if (i == 0)
+        {
+            arg0 = args[i];
             
-        }else if (strcmp(args[0],ls) == 0 || strcmp(args[0],l) == 0 ){            
-            execvp(paths[2],args);            
-        }else if (strcmp(args[0],echo) == 0){
-            execvp(paths[3],args);
-        }else if (strcmp(args[0],cat) == 0){
-            execvp(paths[1],args);
-        }else if (strcmp(args[0],exitt) == 0){
-            terminate();        
-        }else{
-            // Handles undefined commands
-            printf("%s",args[0]);
-            printf(": command not found \n");
-        }                      
+        }
+        else if (i == 1)
+        {
+             arg1 = args[i];
+             
+        }
+        else
+        {
+            strcat(arg2,args[i]);
+            
+        }
+        i++;
     }
-    else if(thisID == -1){
-        // Error in forking
-        printf("Error forking.");        
+    
+    if (strcmp(arg0,touch) == 0)
+    {
+        printf("touch\n");
     }
-    else{
-        // Wait for the child process   
-        wait(&status);                  
-    }    
+    else if(strcmp(arg0,rm) == 0)
+    {
+        printf("rm\n");
+    }
+    else if(strcmp(arg0,write) == 0)
+    {
+        /* code */
+        printf("write\n");
+    }
+    else if(strcmp(arg0,cd) == 0)
+    {
+        /* code */
+        printf("cd\n");
+    }
+    else if(strcmp(arg0,exitt) == 0)
+    {
+        terminate();
+    }
+    
+
+        
 }
 
 
@@ -129,7 +143,7 @@ int terminate(){
     printf("Are you sure you want to exit? [y/n]\n");
     c = getchar();
     if (c == 'y'){
-        kill(0,SIGKILL);
+        exit(0);
     }
     else if(c == 'n'){
         printf("Returning to shell...\n");
