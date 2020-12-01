@@ -2,14 +2,6 @@
 #include <stdlib.h>
 #include "headers/diskSim.h"
 
-const int superblockStart = 0;
-const int inodeStart      = 0;
-const int dataGroupStart  = 0;
-
-const int superblockEnd   = 0;
-const int inodeGroupEnd   = 0;
-const int dataGroupEnd    = 0;
-
 unsigned char disk[maxSize];
 char *test = "test";
 
@@ -32,6 +24,7 @@ void diskInit(){
     createInode();
     // Create Data groups
     createBlockGroup();
+    printf("test");
 }
 
 void diskRead(int index){
@@ -48,8 +41,7 @@ void diskRead(int index){
         {
             printf("%c\n",disk[i]);
         }  
-    }   
-      
+    }      
 }
 
 void diskWrite(int index,char *input){
@@ -80,7 +72,7 @@ void formatDisk(){
     for (int i = 0; i < maxSize; i++)
     {
         disk[i] = 0;
-    }    
+    }   
 }
 
 void createSuperBlock(){
@@ -89,14 +81,6 @@ void createSuperBlock(){
     disk[superblockStart + 2] = maxInodes;
 }
 
-void createInodeBitmap(){
-
-}
-
 void createInode(){
-
-}
-
-void createBlockGroup(){
 
 }
