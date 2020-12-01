@@ -3,28 +3,12 @@
 #include "headers/diskSim.h"
 
 unsigned char disk[maxSize];
-char *test = "test";
-
-int main(){
-    diskInit();    
-    diskWrite(0,test);
-    diskRead(0);
-
-    return 0;
-}
 
 void diskInit(){
     // Format the disk
     formatDisk();    
     // Create superblock
-    createSuperBlock();
-    // Create Inode bitmap
-    createInodeBitmap();
-    // Create Inodes 
-    createInode();
-    // Create Data groups
-    createBlockGroup();
-    printf("test");
+    createSuperBlock();   
 }
 
 void diskRead(int index){
