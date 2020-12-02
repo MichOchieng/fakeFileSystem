@@ -8,8 +8,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-int nFiles = 0;
-
 // Shell methods
 void shell();
 int terminate();
