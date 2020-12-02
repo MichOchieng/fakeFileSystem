@@ -18,6 +18,8 @@ const int inodesEnd        = dataBitmapStart-1;
 const int dataBitmapEnd    = dataGroupStart-1;
 const int dataGroupEnd     = maxSize;
 
+int nFiles = 0;
+
 void  diskInit();
 void  diskRead(int startBlock,int endBlock);
 void  diskWrite(int index,char *input);
@@ -27,3 +29,9 @@ void  createInode(int index);
 void  makeFile(int index,char *filename);
 void  writeFile(char *filename,char *str);
 void  deleteFile();
+
+int   inodeOffset(int index);
+int   findFile(char *filename);
+int   getFile(char *fileName);
+int   getFreeInode();
+int   getFreeBlock();
