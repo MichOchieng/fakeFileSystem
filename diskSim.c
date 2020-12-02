@@ -2,67 +2,31 @@
 #include <stdlib.h>
 #include "headers/diskSim.h"
 
-const int superblockStart  = 0;
-const int inodeBMStart     = 128;
-const int inodeStart       = 256;
-const int dataGroup0Start  = 385;
-const int dataGroup1Start  = 515;
-const int dataGroup2Start  = 643;
-const int dataGroup3Start  = 772;
-
-const int dataGroup0       = 384;
-const int dataGroup1       = 514;
-const int dataGroup2       = 642;
-const int dataGroup3       = 771;
-
-const int superblockEnd    = 127;
-const int inodeBMEnd       = 255;
-const int inodesEnd        = 383;
-const int dataGroup0End    = 513;
-const int dataGroup1End    = 641;
-const int dataGroup2End    = 770;
-const int dataGroup3End    = 889;
-
 unsigned char disk[maxSize];
-char *test = "test";
-
-int main(){
-    diskInit();    
-    diskWrite(0,test);
-    diskRead(0);
-
-    return 0;
-}
 
 void diskInit(){
     // Format the disk
     formatDisk();    
     // Create superblock
-    createSuperBlock();
-    // Create Inode bitmap
-    createInodeBitmap();
-    // Create Inodes 
-    createInode();
-    // Create Data groups
-    createBlockGroup();
+    createSuperBlock();   
 }
 
-void diskRead(int index){
-    if (index > maxBlocks) // Outside the range of blocks
+void diskRead(int startBlock,int nBlocks){
+    if (startBlock > maxBlocks) // Outside the range of blocks
     {
         printf("The index entered is too large.");
         exit(0);
     }
     else
     {
-        int blockStart = index * 128;
-        int blockEnd   = blockStart + 128;
-        for (int i = blockStart; i < blockEnd; i++)
+        int realStart = startBlock * 128;
+        int realEnd = nBlocks * 128;
+        for (int i = realStart; i < realEnd; i++)
         {
-            printf("%c\n",disk[i]);
+            printf("%c",disk[i]);
         }  
-    }   
-      
+        printf("\n");
+    }      
 }
 
 void diskWrite(int index,char *input){
@@ -93,7 +57,7 @@ void formatDisk(){
     for (int i = 0; i < maxSize; i++)
     {
         disk[i] = 0;
-    }    
+    }   
 }
 
 void createSuperBlock(){
@@ -102,14 +66,6 @@ void createSuperBlock(){
     disk[superblockStart + 2] = maxInodes;
 }
 
-void createInodeBitmap(){
-
-}
-
 void createInode(){
-
-}
-
-void createBlockGroup(){
 
 }
