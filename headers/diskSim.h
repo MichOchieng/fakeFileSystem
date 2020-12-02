@@ -30,6 +30,7 @@ void  makeFile(int index,char *filename);
 void  writeFile(char *filename,char *str);
 void  deleteFile();
 
+int   blockOffser(int index);
 int   inodeOffset(int index);
 int   findFile(char *filename);
 int   getFile(char *fileName);
