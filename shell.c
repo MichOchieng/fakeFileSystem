@@ -123,8 +123,7 @@ void execute(char ** args){
     }
     else if(strcmp(arg0,write) == 0)
     {
-        printf("write\n");
-        // write file
+        writeFile(arg1,arg2);
     }
     else if(strcmp(arg0,cd) == 0)
     {
