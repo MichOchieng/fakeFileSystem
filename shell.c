@@ -6,6 +6,7 @@ int main(int argc, char ** argv){
     {
         printString(argv);
     }else{
+        diskInit();
         shell();
     }     
     return 0;
@@ -110,23 +111,25 @@ void execute(char ** args){
         i++;
     }
     
+    // Redirects
     if (strcmp(arg0,touch) == 0)
-    {
-        printf("touch\n");
+    {        
+        makeFile(nFiles,arg1);
     }
     else if(strcmp(arg0,rm) == 0)
     {
         printf("rm\n");
+        // delete file
     }
     else if(strcmp(arg0,write) == 0)
     {
-        /* code */
         printf("write\n");
+        // write file
     }
     else if(strcmp(arg0,cd) == 0)
     {
-        /* code */
         printf("cd\n");
+        // cd
     }
     else if(strcmp(arg0,exitt) == 0)
     {
@@ -136,7 +139,6 @@ void execute(char ** args){
 
         
 }
-
 
 int terminate(){    
     char c;
