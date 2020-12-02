@@ -1,4 +1,5 @@
 #define maxSize 1280000
+#define nInodes 1024
 const int blockSize = 128;
 const int maxBlocks = 10000;
 const int maxInodes = 1024;
@@ -22,4 +23,7 @@ void  diskRead(int startBlock,int endBlock);
 void  diskWrite(int index,char *input);
 void  formatDisk();
 void  createSuperblock();
-void  createInode();
+void  createInode(int index);
+void  makeFile(int index,char *filename);
+void  writeFile(char *filename,char *str);
+void  deleteFile();
