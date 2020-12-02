@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+int nFiles = 0;
+
 // Shell methods
 void shell();
 int terminate();
@@ -17,7 +19,3 @@ void printString();
 void execute(char ** args);
 char * input;
 char ** parseArray;
-// File system methods
-void makeFile();
-void writeFile();
-void deleteFile();
