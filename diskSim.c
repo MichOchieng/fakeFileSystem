@@ -69,14 +69,21 @@ void makeFile(int index,char *filename){
     int inodeIndex   = getFreeInode();
     createInode(inodeOffset(inodeIndex));    
 }
-void writeFile(char *filename,char *str){
-    // Find inode index
+void writeFile(char *filename,char *str){  
+    // Find corresponding inode
+    int inodeIndex = inodeOffset(getFile(filename));  
     // Find next free block
-    // Set inode pointer to block
+    int blockIndex = blockOffser(getFreeBlock());
+    
+    if (blockIndex != 0)
+    {
+        // Set inode pointer to block
         // If block is full -> grab new block
             // If 4 blocks taken -> indirect pointer
-    getFile(filename);
-    
+
+        
+    }
+        
 }
 
 void createSuperBlock(){
@@ -140,7 +147,8 @@ int getFreeBlock(){
         }
         else if(i == dataBitmapEnd && disk[i] == 1)
         {
-            printf("--.\n");
+            printf("--Disk is full.\n");
+            return 0;
         }       
     }
 }
@@ -148,4 +156,8 @@ int getFreeBlock(){
 int inodeOffset(int index)
 {
     return (index*128) + inodesStart;
+}
+
+int blockOffser(int index){
+    return (index*128) + dataGroupStart;
 }
