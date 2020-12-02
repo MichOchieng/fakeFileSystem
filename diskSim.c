@@ -64,9 +64,10 @@ void formatDisk(){
 }
 
 void makeFile(int index,char *filename){ 
+    nFiles++;
     fileNames[index] = filename;   
     int inodeIndex   = getFreeInode();
-    createInode(inodeIndex);    
+    createInode(inodeOffset(inodeIndex));    
 }
 void writeFile(char *filename,char *str){
     // Find inode index
@@ -74,6 +75,7 @@ void writeFile(char *filename,char *str){
     // Set inode pointer to block
         // If block is full -> grab new block
             // If 4 blocks taken -> indirect pointer
+    getFile(filename);
     
 }
 
@@ -85,10 +87,28 @@ void createSuperBlock(){
 
 void createInode(int index){    
     int fileSize   = 0;
-    disk[index + 1] = fileSize;
+    disk[index] = fileSize;
 }
 int findFile(char *filename){
 
+}
+
+int getFile(char *fileName){
+    bool fileFound = false;
+    for (int i = 0; i < nFiles; i++)
+    {
+        int test = strcmp(fileNames[i],fileName);
+        if (test == 0)
+        {   
+            fileFound = true;
+            printf("%s is file number %i.\n",fileName,i);
+            return i;
+        }       
+    }    
+    if(!fileFound)
+    {
+        printf("The file %s does not exist.\n",fileName);
+    }
 }
 
 int getFreeInode(){    
@@ -118,9 +138,14 @@ int getFreeBlock(){
             printf("--Free data block at index: %i\n",i);
             return i;
         }
-        else if(i == inodeBitmapEnd && disk[i] == 1)
+        else if(i == dataBitmapEnd && disk[i] == 1)
         {
             printf("--.\n");
         }       
     }
+}
+
+int inodeOffset(int index)
+{
+    return (index*128) + inodesStart;
 }
