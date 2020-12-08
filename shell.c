@@ -106,7 +106,11 @@ void execute(char ** args){
         }
         else
         {
-            strcat(arg2,args[i]);            
+            strcat(arg2,args[i]); 
+            // Add spaces between words
+            if(args[i] != NULL){
+                strcat(arg2," ");
+            }           
         }
         i++;
     }
@@ -123,7 +127,7 @@ void execute(char ** args){
     }
     else if(strcmp(arg0,write) == 0)
     {
-        writeFile(arg1,arg2);
+        writeFile(arg1,arg2);        
     }
     else if(strcmp(arg0,cd) == 0)
     {
