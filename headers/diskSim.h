@@ -3,7 +3,7 @@
 const int blockSize = 128;
 const int maxBlocks = 10000;
 const int maxInodes = 1024;
-const unsigned char magicNum = 0xf0f03410;
+const int magicNum = 0xf0f03410;
 
 // Block starting positions
 const int superblockStart  = 0;
