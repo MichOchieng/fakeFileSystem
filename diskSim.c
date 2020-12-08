@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
+#include <string.h>
 #include "headers/diskSim.h"
+
 
 unsigned char disk[maxSize];
 char *fileNames[nInodes];
@@ -14,46 +17,30 @@ void diskInit(){
     printf("--Disk created\n");
 }
 
-void diskRead(int startBlock,int nBlocks){
-    if (startBlock > maxBlocks) // Outside the range of blocks
+void diskRead(char *filename){
+    // Get inode bitmap index
+    int fileIndex  = inodeOffset(getFile(filename));  
+    if (fileIndex != 0)
     {
-        printf("--The index entered is too large.");
-        exit(0);
-    }
-    else
-    {
-        int realStart = startBlock * 128;
-        int realEnd = nBlocks * 128;
-        for (int i = realStart; i < realEnd; i++)
+        // Get inode index
+        int inodeIndex = inodesStart + (fileIndex * blockSize);
+        // Get number of data blocks
+        int numBlocks  = disk[inodeIndex]/128;        
+        for (int i = 0; i < numBlocks; i++) // Loops over blocks
         {
-            printf("%c",disk[i]);
-        }  
-        printf("\n");
-    }      
-}
+            // Print data blocks
+            int j = 0;
+            int blockStart = disk[inodeIndex + i];
+            while (disk[blockStart + j] != 0)
+            {
+                printf("%c",disk[blockStart + j]);
+            }            
+        }        
+        
 
-void diskWrite(int index,char *input){
-    if (index > maxBlocks)
-    {
-        printf("The index entered is too large.");
-        exit(0);
     }
-    else 
-    {   
-        // Check to see if the block is available
-        int blockStart = index * 128;
-        int blockEnd   = blockStart + 128;
-
-        // Take in the string
-        // Break it down word by word
-        // Store each char to one position of the block
-        int i = 0;
-        while (input[i] != '\0'){     
-            disk[blockStart] = input[i];      
-            blockStart++;     
-            i++;
-        }
-    }    
+    
+    
 }
 
 void formatDisk(){
@@ -71,19 +58,143 @@ void makeFile(int index,char *filename){
 }
 void writeFile(char *filename,char *str){  
     // Find corresponding inode
-    int inodeIndex = inodeOffset(getFile(filename));  
-    // Find next free block
-    int blockIndex = blockOffser(getFreeBlock());
-    
-    if (blockIndex != 0)
-    {
-        // Set inode pointer to block
-        // If block is full -> grab new block
-            // If 4 blocks taken -> indirect pointer
+    int inodeIndex = inodeOffset(getFile(filename));   
+    if (inodeIndex != 0)
+    {   
+        // Empty file
+        if(disk[inodeIndex] == 0){
+            int i = 0;
+            // Increase file size
+            disk[inodeIndex] += 128;
+            // Find next free block
+            int blockIndex = blockOffser(getFreeBlock());            
+            // Set first block
+            disk[inodeIndex + 1] = blockIndex;
+            // End of block
+            int EOB = blockIndex + 127;
+            while (str[i]!= '\0')
+            {
+                disk[blockIndex + i] = str[i];
 
-        
-    }
-        
+                if ((blockIndex + i) == EOB) // If end of block is reached
+                {                   
+                    // Save remaining portion of string
+                    unsigned int n = 1;
+                    char *temp = (char*) malloc(sizeof(char) * pow(2,n));
+                    while (str[i]!= '\0')
+                    {   
+                        int j = 0;
+                        temp[j] = str[i];                     
+                        // If the memory block is too small for temp str
+                        if(j == pow(2,n)){
+                            // Increase the size of the alloted memory                            
+                            n++;
+                            temp = realloc(temp, pow(2,n)*sizeof(char));                            
+                        }
+                        i++;
+                        j++;
+                    }
+                    // Call write Recursively
+                    writeFile(filename,temp);
+                    break;
+                }
+                // Set last block index
+                disk[inodeIndex + 6] = blockIndex + i;                
+            }
+            
+        }       
+        else
+        {
+            if (disk[inodeIndex] < 513) // Check to see if file is already full
+            {
+                // Determines how many blocks have been used
+                int numBlocks = disk[inodeIndex]/128;
+                // Index of current block
+                int currentBlock = disk[inodeIndex + numBlocks];
+                // End of current block
+                int EOB = currentBlock + 127;
+                // Current position in block
+                int currentPos = disk[inodeIndex + 6] + 1;   
+
+                // Checks to see if at the end of the block
+                if(currentBlock == EOB)
+                {
+                    int i = 0;
+                    disk[currentPos] = str[i];
+                    if (numBlocks == 4)
+                    {
+                        printf("File %s is full!",filename);
+                    }
+                    else // Get a new block
+                    {
+                        
+                        // Set next block indexes
+                        disk[inodeIndex + numBlocks + 1] = blockOffser(getFreeBlock());
+                        disk[inodeIndex + 6] = (disk[inodeIndex + numBlocks + 1]) - 1;
+                        
+                        disk[inodeIndex] += 128;
+
+                        // Save remaining portion of string
+                        unsigned int n = 1;
+                        char *temp = (char*) malloc(sizeof(char) * pow(2,n));
+                        while (str[i]!= '\0')
+                        {   
+                            int j = 0;
+                            temp[j] = str[i];                     
+                            // If the memory block is too small for temp str
+                            if(j == pow(2,n)){
+                                // Increase the size of the alloted memory                            
+                                n++;
+                                temp = realloc(temp, pow(2,n)*sizeof(char));                            
+                            }
+                            i++;
+                            j++;
+                        }
+                        // Call write Recursively
+                        writeFile(filename,temp);                        
+                    }                   
+                    
+                }
+                else // Wrtite to block until at EOB
+                {   
+                    int i = 0;
+                     while (str[i]!= '\0')
+                    {
+                        disk[currentPos + i] = str[i];
+
+                        if ((currentPos + i) == EOB) // If end of block is reached
+                        {                   
+                            // Save remaining portion of string
+                            unsigned int n = 1;
+                            char *temp = (char*) malloc(sizeof(char) * pow(2,n));
+                            while (str[i]!= '\0')
+                            {   
+                                int j = 0;
+                                temp[j] = str[i];                     
+                                // If the memory block is too small for temp str
+                                if(j == pow(2,n)){
+                                    // Increase the size of the alloted memory                            
+                                    n++;
+                                    temp = realloc(temp, pow(2,n)*sizeof(char));                            
+                                }
+                                i++;
+                                j++;
+                            }
+                            // Call write Recursively
+                            writeFile(filename,temp);
+                            break;
+                        }
+                        // Set last block index
+                        disk[inodeIndex + 6] = currentPos + i;                
+                    }
+                }               
+            }
+            else
+            {
+                printf("File %s is full!",filename);
+            }           
+        }        
+    }        
 }
 
 void createSuperBlock(){
@@ -115,6 +226,7 @@ int getFile(char *fileName){
     if(!fileFound)
     {
         printf("The file %s does not exist.\n",fileName);
+        return 0;
     }
 }
 
