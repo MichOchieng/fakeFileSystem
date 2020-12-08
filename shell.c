@@ -82,12 +82,13 @@ void execute(char ** args){
     char *touch = "touch";
     char *rm    = "rm";
     char *write = "write";
+    char *read  = "read";
     char *cd    = "cd";    
     char *exitt = "exit";
 
     char *arg0;
     char *arg1;
-    char *arg2 = "";
+    char *arg2 = (char*)malloc(512*sizeof(char));
 
     int i = 0;  
     // Gets arguments
@@ -105,8 +106,7 @@ void execute(char ** args){
         }
         else
         {
-            strcat(arg2,args[i]);
-            
+            strcat(arg2,args[i]);            
         }
         i++;
     }
@@ -129,6 +129,10 @@ void execute(char ** args){
     {
         printf("cd\n");
         // cd
+    }
+    else if(strcmp(arg0,read) == 0)
+    {
+        diskRead(arg1);
     }
     else if(strcmp(arg0,exitt) == 0)
     {
