@@ -7,22 +7,21 @@ const unsigned char magicNum = 0xf0f03410;
 
 // Block starting positions
 const int superblockStart  = 0;
-const int inodeBitmapStart = blockSize;
-const int inodesStart      = blockSize*9;
-const int dataBitmapStart  = blockSize*maxInodes;
-const int dataGroupStart   = (blockSize*32) + dataBitmapStart;
+#define inodeBitmapStart blockSize
+#define inodesStart      blockSize*9
+#define dataBitmapStart  blockSize*maxInodes
+#define dataGroupStart   (blockSize*32) + dataBitmapStart
 // Block Ending positions 
-const int superblockEnd    = blockSize-1;
-const int inodeBitmapEnd   = (blockSize*8)-1;
-const int inodesEnd        = dataBitmapStart-1;
-const int dataBitmapEnd    = dataGroupStart-1;
-const int dataGroupEnd     = maxSize;
+#define superblockEnd    blockSize-1
+#define inodeBitmapEnd   (blockSize*8)-1
+#define inodesEnd        dataBitmapStart-1
+#define dataBitmapEnd    dataGroupStart-1
+#define dataGroupEnd     maxSize
 
 int nFiles = 0;
 
 void  diskInit();
-void  diskRead(int startBlock,int endBlock);
-void  diskWrite(int index,char *input);
+void  diskRead(char *filename);
 void  formatDisk();
 void  createSuperblock();
 void  createInode(int index);
