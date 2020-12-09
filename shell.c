@@ -16,6 +16,7 @@ void shell(){
     bool on = true;
     // Will always run at very least once
     do{        
+       printf("%s: ",currentDir);
        execute(parser(reader()));  
        input = NULL;
        parseArray = NULL;
@@ -85,6 +86,7 @@ void execute(char ** args){
     char *read  = "read";
     char *cd    = "cd";    
     char *exitt = "exit";
+    char *mkdir = "mkdir";
 
     char *arg0;
     char *arg1;
@@ -130,8 +132,11 @@ void execute(char ** args){
     }
     else if(strcmp(arg0,cd) == 0)
     {
-        printf("cd\n");
-        // cd
+        changeDir(arg1);
+    }
+    else if(strcmp(arg0,mkdir) == 0)
+    {
+        mkDir(arg1);
     }
     else if(strcmp(arg0,read) == 0)
     {
