@@ -9,7 +9,7 @@ int disk[maxSize];
 char *fileNames[nInodes];
 char *directories[nInodes];
 char *currentDir;
-bool inRoot = true;
+bool  inRoot = true;
 
 void diskInit(){
     formatDisk();    
@@ -19,12 +19,27 @@ void diskInit(){
 
 void diskRead(char *filename){
     // Get inode index
-    int inodeIndex  = inodeOffset(getFile(filename));    
+    int inodeIndex;
+    if (inRoot == false) // Outside of the root directory
+    {
+        // Get index of file in filenames array
+        int fileindex = getFile(filename);
+        // Get directory inode
+        int dirInodeIndex = inodeOffset(getDirIndex(currentDir));        
+        // Get directory data block start
+        int dataBlockStart = disk[dirInodeIndex+1];
+        // Retrieve file inode 
+        inodeIndex = disk[dataBlockStart + fileindex];
+    }else
+    {
+        // Find corresponding inode
+        inodeIndex = inodeOffset(getFile(filename));
+    }
+
     if (inodeIndex != -1)
     {       
         // Get number of data blocks
-        int numBlocks  = disk[inodeIndex]/128;   
-        printf("%s: ",currentDir);    
+        int numBlocks  = disk[inodeIndex]/128;           
         for (int i = 0; i < numBlocks; i++) // Loops over blocks
         {
             // Print data blocks
@@ -52,14 +67,52 @@ void formatDisk(){
 }
 
 void makeFile(int index,char *filename){ 
-    nFiles++;
-    fileNames[index] = filename;   
-    int inodeIndex   = getFreeInode();
-    createInode(inodeOffset(inodeIndex));    
+    if (inRoot == false)
+    {
+        nFiles++;
+        fileNames[index] = filename;
+        int dirInode     = inodeOffset(getDirIndex(currentDir));
+        int dirDataBlock = disk[dirInode+1];
+        int inodeIndex   = getFreeInode();
+        // Find the next free byte in the block
+        for (int i = dirDataBlock; i < (dirDataBlock+128); i++)
+        {
+            if (disk[i] == 0)
+            {
+                // Save file inode to unocupied byte
+                disk[i] = inodeIndex; 
+                printf("inode #%i is at index %i\n",inodeIndex,i);
+                createInode(inodeOffset(inodeIndex)); 
+                break;
+            }            
+        }
+    }else // In root create files normally
+    {
+        nFiles++;
+        fileNames[index] = filename;   
+        int inodeIndex   = getFreeInode();
+        createInode(inodeOffset(inodeIndex));   
+    }
 }
-void writeFile(char *filename,char *str){  
-    // Find corresponding inode
-    int inodeIndex = inodeOffset(getFile(filename));   
+
+
+void writeFile(char *filename,char *str){   
+    int inodeIndex;
+    if (inRoot == false)
+    {
+        // Get index of file in filenames array
+        int fileindex = getFile(filename);
+        // Get directory inode
+        int dirInodeIndex = inodeOffset(getDirIndex(currentDir));        
+        // Get directory data block start
+        int dataBlockStart = disk[dirInodeIndex+1];
+        // Retrieve file inode 
+        inodeIndex = disk[dataBlockStart + fileindex];
+    }else
+    {
+        // Find corresponding inode
+        inodeIndex = inodeOffset(getFile(filename));
+    }   
     if (inodeIndex != -1)
     {       
         // Empty file
@@ -261,9 +314,8 @@ void mkDir(int index,char *dirName){
 }
 void changeDir(char *dir){
     bool dirFound = false;
-    char *goBack = "..";
-    int cmp1 = strcmp(dir,goBack);
-    if (cmp1 == 0)
+    char *goBack = "..";    
+    if (strcmp(dir,goBack) == 0)
     {
         // Go back to the root folder
         dirFound = true;
@@ -312,7 +364,29 @@ int getFile(char *fileName){
     bool fileFound = false;
     for (int i = 0; i < nFiles; i++)
     {
-        int test = strcmp(fileNames[i],fileName);
+        if (fileNames[i] != NULL)
+        {
+            int test = strcmp(fileNames[i],fileName);
+            if (test == 0)
+            {   
+                fileFound = true;            
+                return i;
+            } 
+        }
+              
+    }    
+    if(!fileFound)
+    {
+        printf("The file '%s' does not exist.\n",fileName);
+        return -1;
+    }
+}
+
+int getDirIndex(char *dir){
+    bool fileFound = false;
+    for (int i = 0; i < nInodes; i++)
+    {
+        int test = strcmp(directories[i],dir);
         if (test == 0)
         {   
             fileFound = true;            
@@ -321,7 +395,7 @@ int getFile(char *fileName){
     }    
     if(!fileFound)
     {
-        printf("The file '%s' does not exist.\n",fileName);
+        printf("The directory '%s' does not exist.\n",dir);
         return -1;
     }
 }
