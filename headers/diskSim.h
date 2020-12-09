@@ -30,12 +30,13 @@ void  createRoot();
 void  makeFile(int index,char *filename);
 void  writeFile(char *filename,char *str);
 void  deleteFile(char *fileName);
-void  mkDir(char *dir);
+void  mkDir(int index,char *dirName);
 void  changeDir(char *dir);
 
 int   blockOffser(int index);
 int   inodeOffset(int index);
 int   findFile(char *filename);
 int   getFile(char *fileName);
+int   getDirIndex(char *dir);
 int   getFreeInode();
 int   getFreeBlock();
