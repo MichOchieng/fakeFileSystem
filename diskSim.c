@@ -5,9 +5,9 @@
 #include <string.h>
 #include "headers/diskSim.h"
 
-
 int disk[maxSize];
 char *fileNames[nInodes];
+char *currentDir;
 
 void diskInit(){
     // Format the disk
@@ -194,6 +194,49 @@ void writeFile(char *filename,char *str){
         }        
     }        
 }
+void deleteFile(char *fileName){
+    // Get inode
+    int inodeIndex  = inodeOffset(getFile(fileName)); 
+    int fileIndex   = getFile(fileName);
+    fileNames[fileIndex] = "";
+    if (inodeIndex != -1)
+    {
+        // Clear bitmap  
+        int bitMapIndex    = inodeBitmapStart + ((inodeIndex-inodesStart)/blockSize);
+        disk[bitMapIndex]  = 0; 
+        // Clear Data group bitmap
+        int dataGroupIndex   = dataBitmapStart + ((inodeIndex-inodesStart)/blockSize); 
+        disk[dataGroupIndex] = 0; 
+        // Clear data blocks
+        int numBlocks  = disk[inodeIndex]/128;
+        for (int i = 0; i < numBlocks; i++) // Loops over blocks
+        {            
+            int j = 0;
+            int blockStart = disk[inodeIndex + (i+1)];
+            while (disk[blockStart + j] != 0)
+            {    
+                // Resets block to default value            
+                disk[blockStart + j] = 0;                
+                j++;
+            }            
+        }
+        // Clear inode
+        for (int i = inodeIndex; i < (inodeIndex + 128); i++)
+        {
+            disk[i] = 0;
+        }        
+    }
+    else
+    {
+        printf("The file %s does not exist.",fileName);
+    }
+
+}
+void createRoot(){
+    // Create Inode
+    // Create Empty file
+    // Print dir
+}
 
 void createSuperblock(){
     disk[superblockStart]     = magicNum;
@@ -203,10 +246,7 @@ void createSuperblock(){
 
 void createInode(int index){    
     int fileSize   = 0;
-    disk[index] = fileSize;
-}
-int findFile(char *filename){
-
+    disk[index]    = fileSize;
 }
 
 int getFile(char *fileName){
