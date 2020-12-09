@@ -4,6 +4,7 @@ const int blockSize = 128;
 const int maxBlocks = 10000;
 const int maxInodes = 1024;
 const int magicNum = 0xf0f03410;
+const int numDirs = 3;
 
 // Block starting positions
 const int superblockStart  = 0;
@@ -29,6 +30,8 @@ void  createRoot();
 void  makeFile(int index,char *filename);
 void  writeFile(char *filename,char *str);
 void  deleteFile(char *fileName);
+void  mkDir(char *dir);
+void  changeDir(char *dir);
 
 int   blockOffser(int index);
 int   inodeOffset(int index);
