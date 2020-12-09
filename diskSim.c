@@ -6,9 +6,10 @@
 #include "headers/diskSim.h"
 
 int disk[maxSize];
-char *fileNames[nInodes];         // Used for root filenames
+char *fileNames[nInodes];
 char *directories[nInodes];
 char *currentDir;
+bool inRoot = true;
 
 void diskInit(){
     formatDisk();    
@@ -44,6 +45,10 @@ void formatDisk(){
     {
         disk[i] = 0;
     }   
+    for (int i = 0; i < nInodes; i++)
+    {
+        directories[i] = "";
+    }  
 }
 
 void makeFile(int index,char *filename){ 
@@ -233,14 +238,62 @@ void deleteFile(char *fileName){
 
 }
 void createRoot(){
-    makeFile(0,"");   
-    currentDir = "/";    
+    makeFile(0,"");     
+    currentDir = ""; 
 }
-void mkDir(char *dir){
-    printf("mkdir\n");
+void mkDir(int index,char *dirName){
+    nFiles++;
+    directories[index] = dirName;   
+    int inodeIndex   = getFreeInode();
+    createInode(inodeOffset(inodeIndex));
+
+    int dataBlock1 = blockOffser(getFreeBlock());
+    int dataBlock2 = blockOffser(getFreeBlock());
+    int dataBlock3 = blockOffser(getFreeBlock());
+    int dataBlock4 = blockOffser(getFreeBlock());
+    // Give max file size
+    disk[inodeIndex] = 512;
+    // Set data blocks indexes
+    disk[inodeIndex + 1] = dataBlock1;
+    disk[inodeIndex + 2] = dataBlock2;
+    disk[inodeIndex + 3] = dataBlock3;
+    disk[inodeIndex + 4] = dataBlock4;    
 }
 void changeDir(char *dir){
-    printf("changeDir\n");  
+    bool dirFound = false;
+    char *goBack = "..";
+    int cmp1 = strcmp(dir,goBack);
+    if (cmp1 == 0)
+    {
+        // Go back to the root folder
+        dirFound = true;
+        inRoot = true;
+        currentDir = "";
+    }else
+    {
+        // Check to see if directort exists
+        int i = 0;
+        while (i<nInodes)
+        {
+            // If the directory exits enter it            
+            if (strcmp(directories[i],dir) == 0)
+            {
+                dirFound = true;
+                inRoot = false;                
+                currentDir = NULL;          
+                currentDir = dir;    
+                break;
+            } 
+            i++;
+        }
+        
+        if (!dirFound)
+        {
+            printf("The folder '%s' doesn't exist.\n", dir);
+        }
+    }
+    
+        
 }
 
 
@@ -262,14 +315,13 @@ int getFile(char *fileName){
         int test = strcmp(fileNames[i],fileName);
         if (test == 0)
         {   
-            fileFound = true;
-            printf("%s is file number %i.\n",fileName,i);
+            fileFound = true;            
             return i;
         }       
     }    
     if(!fileFound)
     {
-        printf("The file %s does not exist.\n",fileName);
+        printf("The file '%s' does not exist.\n",fileName);
         return -1;
     }
 }
@@ -297,8 +349,7 @@ int getFreeBlock(){
         if (disk[i] == 0)
         {
             // Free inode found
-            disk[i] = 1;
-            printf("--Free data block at index: %i\n",i);
+            disk[i] = 1;            
             return (i-dataBitmapStart);
         }
         else if(i == dataBitmapEnd && disk[i] == 1)
