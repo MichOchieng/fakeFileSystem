@@ -6,15 +6,14 @@
 #include "headers/diskSim.h"
 
 int disk[maxSize];
-char *fileNames[nInodes];
+char *fileNames[nInodes];         // Used for root filenames
+char *directories[nInodes];
 char *currentDir;
 
 void diskInit(){
-    // Format the disk
     formatDisk();    
-    // Create superblock
     createSuperblock();   
-    printf("--Disk created\n");
+    createRoot();    
 }
 
 void diskRead(char *filename){
@@ -23,7 +22,8 @@ void diskRead(char *filename){
     if (inodeIndex != -1)
     {       
         // Get number of data blocks
-        int numBlocks  = disk[inodeIndex]/128;       
+        int numBlocks  = disk[inodeIndex]/128;   
+        printf("%s: ",currentDir);    
         for (int i = 0; i < numBlocks; i++) // Loops over blocks
         {
             // Print data blocks
@@ -233,10 +233,16 @@ void deleteFile(char *fileName){
 
 }
 void createRoot(){
-    // Create Inode
-    // Create Empty file
-    // Print dir
+    makeFile(0,"");   
+    currentDir = "/";    
 }
+void mkDir(char *dir){
+    printf("mkdir\n");
+}
+void changeDir(char *dir){
+    printf("changeDir\n");  
+}
+
 
 void createSuperblock(){
     disk[superblockStart]     = magicNum;
@@ -274,8 +280,7 @@ int getFreeInode(){
         if (disk[i] == 0)
         {
             // Free inode found
-            disk[i] = 1;
-            printf("--Free inode at index: %i\n",i);
+            disk[i] = 1;            
             return i;
         }
         else if(i == inodeBitmapEnd && disk[i] == 1)
