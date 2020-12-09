@@ -16,7 +16,7 @@ void shell(){
     bool on = true;
     // Will always run at very least once
     do{        
-       printf("%s: ",currentDir);
+       printf("/%s: ",currentDir);
        execute(parser(reader()));  
        input = NULL;
        parseArray = NULL;
@@ -136,7 +136,7 @@ void execute(char ** args){
     }
     else if(strcmp(arg0,mkdir) == 0)
     {
-        mkDir(arg1);
+        mkDir(nFiles,arg1);
     }
     else if(strcmp(arg0,read) == 0)
     {
