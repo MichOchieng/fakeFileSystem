@@ -30,14 +30,13 @@ void diskRead(char *filename){
             int j = 0;
             int blockStart = disk[inodeIndex + (i+1)];
             while (disk[blockStart + j] != 0)
-            {
+            {                
                 printf("%c",disk[blockStart + j]);                
                 j++;
             }            
         }
         printf("\n");
-    }  
-    fflush(stdout);  
+    }   
 }
 
 void formatDisk(){
@@ -67,6 +66,8 @@ void writeFile(char *filename,char *str){
             int blockIndex = blockOffser(getFreeBlock());            
             // Set first block
             disk[inodeIndex + 1] = blockIndex;
+            // Set current byte
+            disk[inodeIndex + 6] = blockIndex;
             // End of block
             int EOB = blockIndex + 127;
             while (str[i]!= '\0')
@@ -94,23 +95,25 @@ void writeFile(char *filename,char *str){
                     writeFile(filename,temp);
                     break;
                 }
+                //Increase index of current byte
+                disk[inodeIndex + 6] += 1;
                 i++;               
             }
             // Set last block index
             disk[inodeIndex + 6] = blockIndex + i; 
         }       
         else
-        {   
+        {           
             if (disk[inodeIndex] < 513) // Check to see if file is already full
-            {   
+            {               
                 // Determines how many blocks have been used
                 int numBlocks = disk[inodeIndex]/128;
                 // Index of current block
-                int currentBlock = disk[inodeIndex + numBlocks];
+                int currentBlock = disk[inodeIndex + numBlocks];                
                 // End of current block
                 int EOB = currentBlock + 127;
                 // Current position in block
-                int currentPos = disk[inodeIndex + 6] + 1;   
+                int currentPos = disk[inodeIndex + 6];   
 
                 // Checks to see if at the end of the block
                 if(currentBlock == EOB)
@@ -153,10 +156,9 @@ void writeFile(char *filename,char *str){
                 else // Wrtite to block until at EOB
                 {   
                     int i = 0;
-                     while (str[i]!= '\0')
+                    while (str[i]!= '\0')
                     {
-                        disk[currentPos + i] = str[i];
-
+                        disk[currentPos + i] = str[i];                        
                         if ((currentPos + i) == EOB) // If end of block is reached
                         {                   
                             // Save remaining portion of string
@@ -179,9 +181,10 @@ void writeFile(char *filename,char *str){
                             writeFile(filename,temp);
                             break;
                         }
-                        // Set last block index
-                        disk[inodeIndex + 6] = currentPos + i;                
+                        i++;                                  
                     }
+                    // Set last block index
+                    disk[inodeIndex + 6] = currentPos + i;      
                 }               
             }
             else
