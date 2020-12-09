@@ -122,8 +122,7 @@ void execute(char ** args){
     }
     else if(strcmp(arg0,rm) == 0)
     {
-        printf("rm\n");
-        // delete file
+        deleteFile(arg1);        
     }
     else if(strcmp(arg0,write) == 0)
     {
