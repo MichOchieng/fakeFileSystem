@@ -25,9 +25,10 @@ void  diskRead(char *filename);
 void  formatDisk();
 void  createSuperblock();
 void  createInode(int index);
+void  createRoot();
 void  makeFile(int index,char *filename);
 void  writeFile(char *filename,char *str);
-void  deleteFile();
+void  deleteFile(char *fileName);
 
 int   blockOffser(int index);
 int   inodeOffset(int index);
