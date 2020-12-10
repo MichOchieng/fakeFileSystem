@@ -1,3 +1,11 @@
+Completely Fake File System (CFFS)
+==================================
+This is not a working file system, and cannot be mounted.\
+This programs simulates the disk and partition and temporarily saves
+data in memory.
+
+# Functions
+
 void  diskInit();                                                     // Formats the disk, creates superblock and root directory\
 void  diskRead(char *filename);                       // Allows user to read "file" data\
 void  formatDisk();                                              // Sets disk values to 0 and fills directory array to empty strings\
@@ -18,3 +26,11 @@ int   getFile(char *fileName);                    // Used for get
 int   getDirIndex(char *dir);                     // Used for getting directory index for inode calculations\
 int   getFreeInode();                                  // Gets the location of the next free inode\
 int   getFreeBlock();                                  // Gets the location of the next data block
+
+# Shell Operations
+touch <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                 //Creates files\
+mkdir <Directory>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Creates folders\
+cd    <Directory>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                //Changes directories\
+rm    <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                 //Removes files\
+write <Filename> <String>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;        //Writes given input to files\
+read   <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Reads from files and prints to terminal
