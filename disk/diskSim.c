@@ -41,7 +41,7 @@ void diskRead(char *filename){
     {       
         // Get number of data blocks
         int numBlocks  = disk[inodeIndex]/128;       
-        printf("There are %i blocks being used\n",numBlocks);    
+        //printf("There are %i blocks being used\n",numBlocks);    
         for (int i = 0; i < numBlocks; i++) // Loops over blocks
         {
             // Print data block content           
@@ -84,7 +84,6 @@ void makeFile(int index,char *filename){
             {
                 // Save file inode to unocupied byte
                 disk[i] = inodeIndex; 
-                printf("inode #%i is at index %i\n",inodeIndex,i);
                 createInode(inodeOffset(inodeIndex)); 
                 break;
             }            
