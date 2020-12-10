@@ -1,6 +1,10 @@
 Completely Fake File System (CFFS)
 ==================================
+<<<<<<< HEAD
 This is not a working file system, and cannot be mounted.<br\>
+=======
+This is not a working file system, and cannot be mounted.\
+>>>>>>> 22a894f08b9b47709a8034550287d6895177c885
 This programs simulates the disk and partition and temporarily saves
 data in memory.
 
