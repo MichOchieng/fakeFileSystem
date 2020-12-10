@@ -28,9 +28,9 @@ int   getFreeInode();                                  
 int   getFreeBlock();                                  // Gets the location of the next data block
 
 # Shell Operations
-touch <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                 //Creates files\
-mkdir <Directory>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Creates folders\
-cd    <Directory>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                //Changes directories\
-rm    <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                 //Removes files\
-write <Filename> <String>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;        //Writes given input to files\
-read   <Filename>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Reads from files and prints to terminal
+touch &nbsp; 'Filename'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                 //Creates files\
+mkdir &nbsp; 'Directory'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Creates folders\
+cd &nbsp;    'Directory'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                //Changes directories\
+rm &nbsp;    'Filename'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;                 //Removes files\
+write &nbsp; 'Filename' 'String'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;        //Writes given input to files\
+read &nbsp;  'Filename' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;                //Reads from files and prints to terminal
